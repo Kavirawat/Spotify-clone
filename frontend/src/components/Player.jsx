@@ -63,27 +63,14 @@ export default function Player({ onOpenAddToPlaylist, onToggleQueue }) {
     <footer className="music-player-bar">
       {/* 1. Current Song Info */}
       <div className="player-album">
-        <div
-          className="player-album-cover-box"
-          onClick={togglePlay}
-          title={isPlaying ? 'Click to Pause' : 'Click to Play'}
-        >
-          <img
-            src={currentSong.coverUrl || '/images/card1img.jpeg'}
-            alt={currentSong.title}
-            className="player-album-cover"
-            onError={(e) => {
-              e.target.src = '/card1img.jpeg';
-            }}
-          />
-          <div className="player-album-cover-overlay">
-            {isPlaying ? (
-              <Pause size={22} fill="#fff" color="#fff" />
-            ) : (
-              <Play size={22} fill="#fff" color="#fff" style={{ marginLeft: '2px' }} />
-            )}
-          </div>
-        </div>
+        <img
+          src={currentSong.coverUrl || '/images/card1img.jpeg'}
+          alt={currentSong.title}
+          className="player-album-cover"
+          onError={(e) => {
+            e.target.src = '/card1img.jpeg';
+          }}
+        />
         <div className="player-album-details">
           <span className="player-album-title" title={currentSong.title}>
             {currentSong.title}
