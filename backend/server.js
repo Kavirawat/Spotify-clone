@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+const fs = require('fs');
 const dotenv = require('dotenv');
 const connectDB = require('./config/db');
 
@@ -30,6 +31,16 @@ app.use('/api/likes', require('./routes/likeRoutes'));
 app.get('/api/health', (req, res) => {
   res.json({ status: 'ok', service: 'Spotify Clone API', timestamp: new Date() });
 });
+
+// In production, serve React frontend from frontend/dist
+const frontendDistPath = path.join(__dirname, '../frontend/dist');
+if (fs.existsSync(frontendDistPath)) {
+  app.use(express.static(frontendDistPath));
+  app.get('*', (req, res, next) => {
+    if (req.path.startsWith('/api')) return next();
+    res.sendFile(path.join(frontendDistPath, 'index.html'));
+  });
+}
 
 // Error handling middleware
 app.use((err, req, res, next) => {
