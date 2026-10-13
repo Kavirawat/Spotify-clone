@@ -1,0 +1,120 @@
+import React, { useEffect, useState } from 'react';
+import SongCard from '../components/SongCard';
+import PlaylistCard from '../components/PlaylistCard';
+import { fetchSongs } from '../services/api';
+import { usePlaylist } from '../context/PlaylistContext';
+
+export default function Home({ onSelectPlaylist }) {
+  const [songs, setSongs] = useState([]);
+  const [filter, setFilter] = useState('all');
+  const [loading, setLoading] = useState(true);
+  const { playlists } = usePlaylist();
+
+  useEffect(() => {
+    async function loadSongs() {
+      setLoading(true);
+      try {
+        const data = await fetchSongs();
+        setSongs(data);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadSongs();
+  }, []);
+
+  const recentSongs = songs.filter((s) => s.category === 'recent' || s.category === 'trending').slice(0, 4);
+  const trendingSongs = songs.filter((s) => s.category === 'trending' || s.category === 'featured');
+  const featuredSongs = songs.filter((s) => s.category === 'featured' || s.category === 'top50');
+
+  return (
+    <div className="content-body">
+      {/* Category Pills */}
+      <div className="category-pills">
+        <button
+          className={`pill-btn ${filter === 'all' ? 'active' : ''}`}
+          onClick={() => setFilter('all')}
+        >
+          All
+        </button>
+        <button
+          className={`pill-btn ${filter === 'music' ? 'active' : ''}`}
+          onClick={() => setFilter('music')}
+        >
+          Music
+        </button>
+        <button
+          className={`pill-btn ${filter === 'podcasts' ? 'active' : ''}`}
+          onClick={() => setFilter('podcasts')}
+        >
+          Podcasts
+        </button>
+      </div>
+
+      {loading ? (
+        <div style={{ color: '#b3b3b3', padding: '24px 0' }}>Loading music tracks...</div>
+      ) : (
+        <>
+          {/* Recently Played */}
+          <div className="section-header">
+            <h2 className="section-title">Recently Played</h2>
+            <span className="section-see-all">Show all</span>
+          </div>
+          <div className="cards-grid">
+            {recentSongs.map((song) => (
+              <SongCard key={song._id} song={song} songList={songs} />
+            ))}
+          </div>
+
+          {/* Trending now near you */}
+          <div className="section-header">
+            <h2 className="section-title">Trending now near you</h2>
+            <span className="section-see-all">Show all</span>
+          </div>
+          <div className="cards-grid">
+            {trendingSongs.map((song) => (
+              <SongCard key={song._id} song={song} songList={songs} />
+            ))}
+          </div>
+
+          {/* Featured Charts */}
+          <div className="section-header">
+            <h2 className="section-title">Featured Charts</h2>
+            <span className="section-see-all">Show all</span>
+          </div>
+          <div className="cards-grid">
+            {featuredSongs.map((song) => (
+              <SongCard key={song._id} song={song} songList={songs} />
+            ))}
+          </div>
+
+          {/* Playlists */}
+          {playlists.length > 0 && (
+            <>
+              <div className="section-header">
+                <h2 className="section-title">Popular Playlists</h2>
+                <span className="section-see-all">Show all</span>
+              </div>
+              <div className="cards-grid">
+                {playlists.map((pl) => (
+                  <PlaylistCard
+                    key={pl._id}
+                    playlist={pl}
+                    onSelect={onSelectPlaylist}
+                  />
+                ))}
+              </div>
+            </>
+          )}
+        </>
+      )}
+
+      {/* Footer Divider */}
+      <div style={{ height: '120px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div style={{ width: '90%', borderTop: '1px solid rgba(255,255,255,0.1)' }}></div>
+      </div>
+    </div>
+  );
+}

@@ -1,0 +1,212 @@
+import React, { useState, useEffect } from 'react';
+import { Play, Pause, PlusCircle, Heart, Search as SearchIcon } from 'lucide-react';
+import { searchSongs } from '../services/api';
+import { usePlayer } from '../context/PlayerContext';
+import { usePlaylist } from '../context/PlaylistContext';
+
+const browseCategories = [
+  { name: 'Bollywood Hits', query: 'Bollywood hits', color: '#bc5900' },
+  { name: 'Arijit Singh', query: 'Arijit Singh', color: '#1e3264' },
+  { name: 'Punjabi Top', query: 'Punjabi hits', color: '#e91429' },
+  { name: 'Diljit Dosanjh', query: 'Diljit Dosanjh', color: '#e8115b' },
+  { name: 'Romantic Hindi', query: 'Romantic Hindi songs', color: '#e1118c' },
+  { name: 'Global Top 50', query: 'Top 50 Global hits', color: '#148a08' },
+  { name: 'Lo-Fi Chill', query: 'Lofi chill beats', color: '#477d95' },
+  { name: 'Pop & EDM', query: 'Pop hits 2024', color: '#8400e7' },
+  { name: 'Sad Melodies', query: 'Sad Hindi songs', color: '#503750' },
+  { name: 'Party & Dance', query: 'Party Hindi songs', color: '#8d67ab' },
+  { name: 'Podcasts', query: 'Motivation podcast', color: '#006450' },
+  { name: 'Workout Beats', query: 'Workout gym hits', color: '#777777' },
+];
+
+export default function Search({ searchQuery, setSearchQuery, onOpenAddToPlaylist }) {
+  const [results, setResults] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const { playSong, togglePlay, currentSong, isPlaying } = usePlayer();
+  const { toggleLike, isSongLiked } = usePlaylist();
+
+  useEffect(() => {
+    async function doSearch() {
+      if (!searchQuery.trim()) {
+        setResults([]);
+        return;
+      }
+      setLoading(true);
+      try {
+        const data = await searchSongs(searchQuery);
+        setResults(data);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    const timer = setTimeout(doSearch, 200);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+  const handleSongClick = (song) => {
+    if (currentSong && currentSong._id === song._id) {
+      togglePlay();
+    } else {
+      playSong(song, results);
+    }
+  };
+
+  return (
+    <div className="content-body">
+      {/* Quick Search Tags */}
+      <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '12px', marginBottom: '16px' }}>
+        {['Arijit Singh', 'Diljit Dosanjh', 'Kesariya', 'Tum Hi Ho', 'Tauba Tauba', 'Chaleya', 'Believer', 'Shape of You'].map(
+          (tag) => (
+            <button
+              key={tag}
+              className={`pill-btn ${searchQuery.toLowerCase() === tag.toLowerCase() ? 'active' : ''}`}
+              onClick={() => setSearchQuery && setSearchQuery(tag)}
+            >
+              {tag}
+            </button>
+          )
+        )}
+      </div>
+
+      {/* If search query is present */}
+      {searchQuery.trim() ? (
+        <div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+            <h2 className="section-title">
+              Results for "<span style={{ color: 'var(--spotify-green)' }}>{searchQuery}</span>"
+            </h2>
+            <span style={{ fontSize: '0.85rem', color: '#b3b3b3' }}>
+              {results.length} real songs found
+            </span>
+          </div>
+
+          {loading ? (
+            <div style={{ color: '#b3b3b3', padding: '32px 0' }}>Searching real music catalog...</div>
+          ) : results.length === 0 ? (
+            <div style={{ color: '#b3b3b3', padding: '32px 0' }}>
+              No songs found matching "{searchQuery}". Try another artist or song name!
+            </div>
+          ) : (
+            <table className="song-table">
+              <thead>
+                <tr>
+                  <th style={{ width: '40px' }}>#</th>
+                  <th>Title</th>
+                  <th>Album</th>
+                  <th style={{ width: '70px' }}>Time</th>
+                  <th style={{ width: '80px' }}>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {results.map((song, idx) => {
+                  const isCurrent = currentSong?._id === song._id;
+                  const isLiked = isSongLiked(song._id, song.title);
+                  return (
+                    <tr
+                      key={`${song._id}-${idx}`}
+                      className={`song-row ${isCurrent ? 'active' : ''}`}
+                      onClick={() => handleSongClick(song)}
+                    >
+                      <td>
+                        <span style={{ display: isCurrent && isPlaying ? 'none' : 'inline' }}>
+                          {idx + 1}
+                        </span>
+                        {isCurrent && isPlaying && (
+                          <span style={{ color: 'var(--spotify-green)', fontWeight: 'bold' }}>▶</span>
+                        )}
+                      </td>
+                      <td>
+                        <div className="song-cell-title">
+                          <img
+                            src={song.coverUrl || '/images/card1img.jpeg'}
+                            alt={song.title}
+                            className="song-cell-thumb"
+                            onError={(e) => {
+                              e.target.src = '/card1img.jpeg';
+                            }}
+                          />
+                          <div className="song-cell-text">
+                            <span className="main-text">{song.title}</span>
+                            <span className="sub-text">{song.artist}</span>
+                          </div>
+                        </div>
+                      </td>
+                      <td>{song.album || 'Single'}</td>
+                      <td>{song.duration || '03:30'}</td>
+                      <td>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                          <button
+                            className={`like-btn ${isLiked ? 'liked' : ''}`}
+                            title={isLiked ? 'Liked' : 'Like song'}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              toggleLike(song);
+                            }}
+                          >
+                            <Heart size={16} fill={isLiked ? 'var(--spotify-green)' : 'transparent'} />
+                          </button>
+                          {onOpenAddToPlaylist && (
+                            <button
+                              className="icon-btn"
+                              title="Add to playlist"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                onOpenAddToPlaylist(song);
+                              }}
+                            >
+                              <PlusCircle size={16} />
+                            </button>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </table>
+          )}
+        </div>
+      ) : (
+        /* Browse All Categories */
+        <div>
+          <h2 className="section-title" style={{ marginBottom: '20px' }}>
+            Browse All Categories
+          </h2>
+          <div
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(170px, 1fr))',
+              gap: '16px',
+            }}
+          >
+            {browseCategories.map((cat) => (
+              <div
+                key={cat.name}
+                onClick={() => setSearchQuery && setSearchQuery(cat.query)}
+                style={{
+                  backgroundColor: cat.color,
+                  borderRadius: '8px',
+                  height: '130px',
+                  padding: '16px',
+                  position: 'relative',
+                  overflow: 'hidden',
+                  cursor: 'pointer',
+                  fontWeight: '700',
+                  fontSize: '1.15rem',
+                  transition: 'transform 0.2s',
+                }}
+                onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.03)')}
+                onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
+              >
+                <span>{cat.name}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
