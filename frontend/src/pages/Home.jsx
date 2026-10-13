@@ -25,9 +25,10 @@ export default function Home({ onSelectPlaylist }) {
     loadSongs();
   }, []);
 
-  const recentSongs = songs.filter((s) => s.category === 'recent' || s.category === 'trending').slice(0, 4);
-  const trendingSongs = songs.filter((s) => s.category === 'trending' || s.category === 'featured');
-  const featuredSongs = songs.filter((s) => s.category === 'featured' || s.category === 'top50');
+  const driveSongs = songs.filter((s) => s.category === 'long drive');
+  const recentSongs = songs.filter((s) => s.category === 'recent').slice(0, 4);
+  const trendingSongs = songs.filter((s) => s.category === 'trending');
+  const featuredSongs = songs.filter((s) => s.category === 'featured');
 
   return (
     <div className="content-body">
@@ -38,6 +39,12 @@ export default function Home({ onSelectPlaylist }) {
           onClick={() => setFilter('all')}
         >
           All
+        </button>
+        <button
+          className={`pill-btn ${filter === 'long drive' ? 'active' : ''}`}
+          onClick={() => setFilter('long drive')}
+        >
+          🚗 Long Drive Vibes
         </button>
         <button
           className={`pill-btn ${filter === 'music' ? 'active' : ''}`}
@@ -55,42 +62,37 @@ export default function Home({ onSelectPlaylist }) {
 
       {loading ? (
         <div style={{ color: '#b3b3b3', padding: '24px 0' }}>Loading music tracks...</div>
+      ) : filter === 'long drive' ? (
+        /* Only Long Drive View */
+        <div>
+          <div className="section-header">
+            <h2 className="section-title">🚗 Long Drive Vibes & Road Trips ({driveSongs.length} Songs)</h2>
+          </div>
+          <div className="cards-grid">
+            {driveSongs.map((song) => (
+              <SongCard key={song._id} song={song} songList={driveSongs} />
+            ))}
+          </div>
+        </div>
       ) : (
         <>
-          {/* Recently Played */}
+          {/* 🚗 Long Drive Vibes Section */}
           <div className="section-header">
-            <h2 className="section-title">Recently Played</h2>
-            <span className="section-see-all">Show all</span>
+            <h2 className="section-title">🚗 Long Drive Vibes (Best Road Trip Songs)</h2>
+            <span
+              className="section-see-all"
+              onClick={() => setFilter('long drive')}
+            >
+              Show all ({driveSongs.length})
+            </span>
           </div>
           <div className="cards-grid">
-            {recentSongs.map((song) => (
+            {driveSongs.slice(0, 8).map((song) => (
               <SongCard key={song._id} song={song} songList={songs} />
             ))}
           </div>
 
-          {/* Trending now near you */}
-          <div className="section-header">
-            <h2 className="section-title">Trending now near you</h2>
-            <span className="section-see-all">Show all</span>
-          </div>
-          <div className="cards-grid">
-            {trendingSongs.map((song) => (
-              <SongCard key={song._id} song={song} songList={songs} />
-            ))}
-          </div>
-
-          {/* Featured Charts */}
-          <div className="section-header">
-            <h2 className="section-title">Featured Charts</h2>
-            <span className="section-see-all">Show all</span>
-          </div>
-          <div className="cards-grid">
-            {featuredSongs.map((song) => (
-              <SongCard key={song._id} song={song} songList={songs} />
-            ))}
-          </div>
-
-          {/* Playlists */}
+          {/* Popular Playlists */}
           {playlists.length > 0 && (
             <>
               <div className="section-header">
@@ -108,6 +110,43 @@ export default function Home({ onSelectPlaylist }) {
               </div>
             </>
           )}
+
+          {/* Trending Now */}
+          <div className="section-header">
+            <h2 className="section-title">Trending Now Near You</h2>
+            <span className="section-see-all">Show all</span>
+          </div>
+          <div className="cards-grid">
+            {trendingSongs.map((song) => (
+              <SongCard key={song._id} song={song} songList={songs} />
+            ))}
+          </div>
+
+          {/* Recently Played */}
+          {recentSongs.length > 0 && (
+            <>
+              <div className="section-header">
+                <h2 className="section-title">Recently Played</h2>
+                <span className="section-see-all">Show all</span>
+              </div>
+              <div className="cards-grid">
+                {recentSongs.map((song) => (
+                  <SongCard key={song._id} song={song} songList={songs} />
+                ))}
+              </div>
+            </>
+          )}
+
+          {/* Featured Charts */}
+          <div className="section-header">
+            <h2 className="section-title">Featured Charts</h2>
+            <span className="section-see-all">Show all</span>
+          </div>
+          <div className="cards-grid">
+            {featuredSongs.map((song) => (
+              <SongCard key={song._id} song={song} songList={songs} />
+            ))}
+          </div>
         </>
       )}
 

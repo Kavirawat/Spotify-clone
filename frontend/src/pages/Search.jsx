@@ -5,10 +5,12 @@ import { usePlayer } from '../context/PlayerContext';
 import { usePlaylist } from '../context/PlaylistContext';
 
 const browseCategories = [
+  { name: '🚗 Long Drive Vibes', query: 'long drive', color: '#1db954' },
   { name: 'Bollywood Hits', query: 'Bollywood hits', color: '#bc5900' },
   { name: 'Arijit Singh', query: 'Arijit Singh', color: '#1e3264' },
   { name: 'Punjabi Top', query: 'Punjabi hits', color: '#e91429' },
   { name: 'Diljit Dosanjh', query: 'Diljit Dosanjh', color: '#e8115b' },
+  { name: 'Shubh & AP Dhillon', query: 'Shubh', color: '#385dae' },
   { name: 'Romantic Hindi', query: 'Romantic Hindi songs', color: '#e1118c' },
   { name: 'Global Top 50', query: 'Top 50 Global hits', color: '#148a08' },
   { name: 'Lo-Fi Chill', query: 'Lofi chill beats', color: '#477d95' },
@@ -58,7 +60,7 @@ export default function Search({ searchQuery, setSearchQuery, onOpenAddToPlaylis
     <div className="content-body">
       {/* Quick Search Tags */}
       <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '12px', marginBottom: '16px' }}>
-        {['Arijit Singh', 'Diljit Dosanjh', 'Kesariya', 'Tum Hi Ho', 'Tauba Tauba', 'Chaleya', 'Believer', 'Shape of You'].map(
+        {['🚗 Long Drive', 'Ilahi', 'Arijit Singh', 'Cheques', 'Diljit Dosanjh', 'Kesariya', 'Tum Hi Ho', 'Tauba Tauba', 'Chaleya', 'Believer'].map(
           (tag) => (
             <button
               key={tag}

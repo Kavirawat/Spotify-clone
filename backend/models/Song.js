@@ -35,8 +35,8 @@ const songSchema = new mongoose.Schema(
     },
     category: {
       type: String,
-      enum: ['recent', 'trending', 'featured', 'podcasts', 'top50'],
       default: 'trending',
+      trim: true,
     },
     plays: {
       type: Number,
