@@ -608,6 +608,75 @@ body {
   color: var(--text-muted);
 }
 
+/* Track number & left-side play/pause icon */
+.track-num-cell {
+  width: 44px;
+  text-align: center;
+  padding: 10px 6px !important;
+}
+
+.track-num-wrapper {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+}
+
+.track-num-text {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+}
+
+.song-row:hover .track-num-text {
+  display: none;
+}
+
+.track-hover-play {
+  display: none;
+}
+
+.song-row:hover .track-hover-play {
+  display: block;
+}
+
+.track-active-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Left side album cover hover overlay in bottom player */
+.player-album-cover-box {
+  position: relative;
+  width: 56px;
+  height: 56px;
+  border-radius: 4px;
+  overflow: hidden;
+  flex-shrink: 0;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.player-album-cover-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.55);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s ease;
+}
+
+.player-album-cover-box:hover .player-album-cover-overlay {
+  opacity: 1;
+}
+
 /* Bottom Music Player */
 .music-player-bar {
   position: fixed;

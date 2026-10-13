@@ -1,11 +1,11 @@
 import React from 'react';
-import { Play, Heart, Clock } from 'lucide-react';
+import { Play, Pause, Heart, Clock } from 'lucide-react';
 import { usePlayer } from '../context/PlayerContext';
 import { usePlaylist } from '../context/PlaylistContext';
 
 export default function LikedSongs() {
   const { likedSongs, toggleLike } = usePlaylist();
-  const { playSong, currentSong } = usePlayer();
+  const { playSong, currentSong, isPlaying, togglePlay } = usePlayer();
 
   const handlePlayAll = () => {
     if (likedSongs.length > 0) {
@@ -59,10 +59,21 @@ export default function LikedSongs() {
                 height: '56px',
                 backgroundColor: 'var(--spotify-green)',
               }}
-              onClick={handlePlayAll}
-              title="Play Liked Songs"
+              onClick={() => {
+                const isLikedPlaying = likedSongs.some((s) => s._id === currentSong?._id);
+                if (isLikedPlaying) {
+                  togglePlay();
+                } else {
+                  handlePlayAll();
+                }
+              }}
+              title={isPlaying && likedSongs.some((s) => s._id === currentSong?._id) ? 'Pause' : 'Play'}
             >
-              <Play size={26} fill="#000" style={{ marginLeft: '4px' }} />
+              {isPlaying && likedSongs.some((s) => s._id === currentSong?._id) ? (
+                <Pause size={26} fill="#000" color="#000" />
+              ) : (
+                <Play size={26} fill="#000" color="#000" style={{ marginLeft: '4px' }} />
+              )}
             </button>
           </div>
         )}
@@ -88,9 +99,30 @@ export default function LikedSongs() {
                   <tr
                     key={song._id}
                     className={`song-row ${isCurrent ? 'active' : ''}`}
-                    onClick={() => playSong(song, likedSongs)}
+                    onClick={() => {
+                      if (isCurrent) {
+                        togglePlay();
+                      } else {
+                        playSong(song, likedSongs);
+                      }
+                    }}
                   >
-                    <td>{idx + 1}</td>
+                    <td className="track-num-cell">
+                      <div className="track-num-wrapper">
+                        {isCurrent ? (
+                          isPlaying ? (
+                            <Pause size={16} fill="var(--spotify-green)" color="var(--spotify-green)" className="track-active-icon" />
+                          ) : (
+                            <Play size={16} fill="var(--spotify-green)" color="var(--spotify-green)" className="track-active-icon" style={{ marginLeft: '2px' }} />
+                          )
+                        ) : (
+                          <>
+                            <span className="track-num-text">{idx + 1}</span>
+                            <Play size={15} fill="#fff" color="#fff" className="track-hover-play" style={{ marginLeft: '2px' }} />
+                          </>
+                        )}
+                      </div>
+                    </td>
                     <td>
                       <div className="song-cell-title">
                         <img

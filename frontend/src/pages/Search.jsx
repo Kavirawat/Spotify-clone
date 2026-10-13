@@ -112,13 +112,21 @@ export default function Search({ searchQuery, setSearchQuery, onOpenAddToPlaylis
                       className={`song-row ${isCurrent ? 'active' : ''}`}
                       onClick={() => handleSongClick(song)}
                     >
-                      <td>
-                        <span style={{ display: isCurrent && isPlaying ? 'none' : 'inline' }}>
-                          {idx + 1}
-                        </span>
-                        {isCurrent && isPlaying && (
-                          <span style={{ color: 'var(--spotify-green)', fontWeight: 'bold' }}>▶</span>
-                        )}
+                      <td className="track-num-cell">
+                        <div className="track-num-wrapper">
+                          {isCurrent ? (
+                            isPlaying ? (
+                              <Pause size={16} fill="var(--spotify-green)" color="var(--spotify-green)" className="track-active-icon" />
+                            ) : (
+                              <Play size={16} fill="var(--spotify-green)" color="var(--spotify-green)" className="track-active-icon" style={{ marginLeft: '2px' }} />
+                            )
+                          ) : (
+                            <>
+                              <span className="track-num-text">{idx + 1}</span>
+                              <Play size={15} fill="#fff" color="#fff" className="track-hover-play" style={{ marginLeft: '2px' }} />
+                            </>
+                          )}
+                        </div>
                       </td>
                       <td>
                         <div className="song-cell-title">

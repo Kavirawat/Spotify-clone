@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Play, Trash2, Clock, Trash } from 'lucide-react';
+import { Play, Pause, Trash2, Clock, Trash } from 'lucide-react';
 import { fetchPlaylistById } from '../services/api';
 import { usePlayer } from '../context/PlayerContext';
 import { usePlaylist } from '../context/PlaylistContext';
@@ -7,7 +7,7 @@ import { usePlaylist } from '../context/PlaylistContext';
 export default function PlaylistDetail({ playlistId, onGoBack }) {
   const [playlist, setPlaylist] = useState(null);
   const [loading, setLoading] = useState(true);
-  const { playSong, currentSong } = usePlayer();
+  const { playSong, currentSong, isPlaying, togglePlay } = usePlayer();
   const { deletePlaylist, removeSongFromPlaylist, refreshData } = usePlaylist();
 
   useEffect(() => {
@@ -98,10 +98,21 @@ export default function PlaylistDetail({ playlistId, onGoBack }) {
           <button
             className="play-pause-circle"
             style={{ width: '56px', height: '56px', backgroundColor: 'var(--spotify-green)' }}
-            onClick={handlePlayAll}
-            title="Play Playlist"
+            onClick={() => {
+              const isPlaylistActive = playlist.songs?.some((s) => s._id === currentSong?._id);
+              if (isPlaylistActive) {
+                togglePlay();
+              } else {
+                handlePlayAll();
+              }
+            }}
+            title={isPlaying && playlist.songs?.some((s) => s._id === currentSong?._id) ? 'Pause' : 'Play'}
           >
-            <Play size={26} fill="#000" style={{ marginLeft: '4px' }} />
+            {isPlaying && playlist.songs?.some((s) => s._id === currentSong?._id) ? (
+              <Pause size={26} fill="#000" color="#000" />
+            ) : (
+              <Play size={26} fill="#000" color="#000" style={{ marginLeft: '4px' }} />
+            )}
           </button>
 
           {playlist.isCustom && (
@@ -137,9 +148,30 @@ export default function PlaylistDetail({ playlistId, onGoBack }) {
                   <tr
                     key={song._id}
                     className={`song-row ${isCurrent ? 'active' : ''}`}
-                    onClick={() => playSong(song, playlist.songs)}
+                    onClick={() => {
+                      if (isCurrent) {
+                        togglePlay();
+                      } else {
+                        playSong(song, playlist.songs);
+                      }
+                    }}
                   >
-                    <td>{idx + 1}</td>
+                    <td className="track-num-cell">
+                      <div className="track-num-wrapper">
+                        {isCurrent ? (
+                          isPlaying ? (
+                            <Pause size={16} fill="var(--spotify-green)" color="var(--spotify-green)" className="track-active-icon" />
+                          ) : (
+                            <Play size={16} fill="var(--spotify-green)" color="var(--spotify-green)" className="track-active-icon" style={{ marginLeft: '2px' }} />
+                          )
+                        ) : (
+                          <>
+                            <span className="track-num-text">{idx + 1}</span>
+                            <Play size={15} fill="#fff" color="#fff" className="track-hover-play" style={{ marginLeft: '2px' }} />
+                          </>
+                        )}
+                      </div>
+                    </td>
                     <td>
                       <div className="song-cell-title">
                         <img
