@@ -2,80 +2,129 @@ const API_BASE = import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.rep
 const BASE_URL = API_BASE ? `${API_BASE}/api` : '/api';
 
 export async function fetchSongs(category = '') {
-  const url = category ? `${BASE_URL}/songs?category=${category}` : `${BASE_URL}/songs`;
-  const res = await fetch(url);
-  const data = await res.json();
-  return data.success ? data.data : [];
+  try {
+    const url = category ? `${BASE_URL}/songs?category=${category}` : `${BASE_URL}/songs`;
+    const res = await fetch(url);
+    if (!res.ok) return [];
+    const data = await res.json().catch(() => null);
+    return data && data.success ? data.data : [];
+  } catch {
+    return [];
+  }
 }
 
 export async function searchSongs(query) {
-  const res = await fetch(`${BASE_URL}/songs/search?q=${encodeURIComponent(query)}`);
-  const data = await res.json();
-  return data.success ? data.data : [];
+  try {
+    const res = await fetch(`${BASE_URL}/songs/search?q=${encodeURIComponent(query)}`);
+    if (!res.ok) return [];
+    const data = await res.json().catch(() => null);
+    return data && data.success ? data.data : [];
+  } catch {
+    return [];
+  }
 }
 
 export async function fetchPlaylists() {
-  const res = await fetch(`${BASE_URL}/playlists`);
-  const data = await res.json();
-  return data.success ? data.data : [];
+  try {
+    const res = await fetch(`${BASE_URL}/playlists`);
+    if (!res.ok) return [];
+    const data = await res.json().catch(() => null);
+    return data && data.success ? data.data : [];
+  } catch {
+    return [];
+  }
 }
 
 export async function fetchPlaylistById(id) {
-  const res = await fetch(`${BASE_URL}/playlists/${id}`);
-  const data = await res.json();
-  return data.success ? data.data : null;
+  try {
+    const res = await fetch(`${BASE_URL}/playlists/${id}`);
+    if (!res.ok) return null;
+    const data = await res.json().catch(() => null);
+    return data && data.success ? data.data : null;
+  } catch {
+    return null;
+  }
 }
 
 export async function createPlaylist(name, description = '') {
-  const res = await fetch(`${BASE_URL}/playlists`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ name, description }),
-  });
-  const data = await res.json();
-  return data.success ? data.data : null;
+  try {
+    const res = await fetch(`${BASE_URL}/playlists`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, description }),
+    });
+    if (!res.ok) return null;
+    const data = await res.json().catch(() => null);
+    return data && data.success ? data.data : null;
+  } catch {
+    return null;
+  }
 }
 
 export async function addSongToPlaylist(playlistId, songId, songData = null) {
-  const res = await fetch(`${BASE_URL}/playlists/${playlistId}/songs`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ songId, songData }),
-  });
-  const data = await res.json();
-  return data.success ? data.data : null;
+  try {
+    const res = await fetch(`${BASE_URL}/playlists/${playlistId}/songs`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ songId, songData }),
+    });
+    if (!res.ok) return null;
+    const data = await res.json().catch(() => null);
+    return data && data.success ? data.data : null;
+  } catch {
+    return null;
+  }
 }
 
 export async function removeSongFromPlaylist(playlistId, songId) {
-  const res = await fetch(`${BASE_URL}/playlists/${playlistId}/songs/${songId}`, {
-    method: 'DELETE',
-  });
-  const data = await res.json();
-  return data.success ? data.data : null;
+  try {
+    const res = await fetch(`${BASE_URL}/playlists/${playlistId}/songs/${songId}`, {
+      method: 'DELETE',
+    });
+    if (!res.ok) return null;
+    const data = await res.json().catch(() => null);
+    return data && data.success ? data.data : null;
+  } catch {
+    return null;
+  }
 }
 
 export async function deletePlaylist(playlistId) {
-  const res = await fetch(`${BASE_URL}/playlists/${playlistId}`, {
-    method: 'DELETE',
-  });
-  const data = await res.json();
-  return data.success;
+  try {
+    const res = await fetch(`${BASE_URL}/playlists/${playlistId}`, {
+      method: 'DELETE',
+    });
+    if (!res.ok) return false;
+    const data = await res.json().catch(() => null);
+    return Boolean(data && data.success);
+  } catch {
+    return false;
+  }
 }
 
 export async function fetchLikedSongs() {
-  const res = await fetch(`${BASE_URL}/likes`);
-  const data = await res.json();
-  return data.success ? data.data : [];
+  try {
+    const res = await fetch(`${BASE_URL}/likes`);
+    if (!res.ok) return [];
+    const data = await res.json().catch(() => null);
+    return data && data.success ? data.data : [];
+  } catch {
+    return [];
+  }
 }
 
 export async function toggleLikeSong(songId, songData = null) {
-  const res = await fetch(`${BASE_URL}/likes/toggle`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ songId, songData }),
-  });
-  const data = await res.json();
-  return data;
+  try {
+    const res = await fetch(`${BASE_URL}/likes/toggle`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ songId, songData }),
+    });
+    const data = await res.json().catch(() => null);
+    return data || { success: false };
+  } catch {
+    return { success: false };
+  }
 }
 
 export async function registerUser(name, email, password) {
