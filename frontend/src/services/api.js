@@ -1,6 +1,6 @@
-import { defaultSongs, defaultPlaylists } from './defaultData';
+import { defaultSongs, defaultPlaylists } from './defaultData.js';
 
-const API_BASE = import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace(/\/+$/, '') : '';
+const API_BASE = (typeof import.meta !== 'undefined' && import.meta.env && import.meta.env.VITE_API_URL) ? import.meta.env.VITE_API_URL.replace(/\/+$/, '') : '';
 const BASE_URL = API_BASE ? `${API_BASE}/api` : '/api';
 
 export async function fetchSongs(category = '') {
@@ -19,22 +19,20 @@ export async function fetchSongs(category = '') {
   return defaultSongs.filter((s) => s.category === category);
 }
 
-export async function searchSongs(query) {
-  try {
-    const res = await fetch(`${BASE_URL}/songs/search?q=${encodeURIComponent(query)}`);
-    if (res.ok) {
-      const data = await res.json().catch(() => null);
-      if (data && data.success && Array.isArray(data.data) && data.data.length > 0) {
-        return data.data;
-      }
-    }
-  } catch {}
+function formatDurationMs(ms) {
+  if (!ms || typeof ms !== 'number') return '03:30';
+  const totalSecs = Math.floor(ms / 1000);
+  const m = Math.floor(totalSecs / 60);
+  const s = totalSecs % 60;
+  return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+}
 
+export async function searchSongs(query) {
   if (!query || typeof query !== 'string' || !query.trim()) return defaultSongs;
   const q = query.toLowerCase().trim();
   const cleanQ = q.replace(/[^\p{L}\p{N}\s]/gu, '').trim();
 
-  return defaultSongs.filter((s) => {
+  const localMatches = defaultSongs.filter((s) => {
     if (!s) return false;
     const title = (s.title || '').toLowerCase();
     const artist = (s.artist || '').toLowerCase();
@@ -51,6 +49,55 @@ export async function searchSongs(query) {
     }
     return false;
   });
+
+  let serverMatches = [];
+  try {
+    const res = await fetch(`${BASE_URL}/songs/search?q=${encodeURIComponent(query)}`);
+    if (res.ok) {
+      const data = await res.json().catch(() => null);
+      if (data && data.success && Array.isArray(data.data)) {
+        serverMatches = data.data;
+      }
+    }
+  } catch {}
+
+  let externalMatches = [];
+  try {
+    const itunesUrl = `https://itunes.apple.com/search?term=${encodeURIComponent(query)}&entity=song&limit=40`;
+    const res = await fetch(itunesUrl);
+    if (res.ok) {
+      const json = await res.json().catch(() => null);
+      if (json && Array.isArray(json.results)) {
+        externalMatches = json.results
+          .filter((item) => item && item.previewUrl && item.trackName)
+          .map((item) => ({
+            _id: 'itunes_' + item.trackId,
+            title: item.trackName,
+            artist: item.artistName || 'Unknown Artist',
+            album: item.collectionName || 'Single',
+            duration: formatDurationMs(item.trackTimeMillis),
+            durationSeconds: Math.round((item.trackTimeMillis || 210000) / 1000),
+            audioUrl: item.previewUrl,
+            coverUrl: item.artworkUrl100 ? item.artworkUrl100.replace('100x100bb', '500x500bb') : '/card1img.jpeg',
+            category: 'trending',
+          }));
+      }
+    }
+  } catch {}
+
+  const seen = new Set();
+  const combined = [];
+
+  for (const song of [...localMatches, ...serverMatches, ...externalMatches]) {
+    if (!song || !song.title) continue;
+    const key = `${(song.title || '').toLowerCase().trim()}_${(song.artist || '').toLowerCase().trim()}`;
+    if (!seen.has(key)) {
+      seen.add(key);
+      combined.push(song);
+    }
+  }
+
+  return combined.length > 0 ? combined : localMatches;
 }
 
 export async function fetchPlaylists() {

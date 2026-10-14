@@ -93,12 +93,12 @@ export default function Search({ searchQuery = '', setSearchQuery, onOpenAddToPl
               Results for "<span style={{ color: 'var(--spotify-green)' }}>{queryStr}</span>"
             </h2>
             <span style={{ fontSize: '0.85rem', color: '#b3b3b3' }}>
-              {Array.isArray(results) ? results.length : 0} real songs found
+              {Array.isArray(results) ? results.length : 0} songs found
             </span>
           </div>
 
           {loading ? (
-            <div style={{ color: '#b3b3b3', padding: '32px 0' }}>Searching real music catalog...</div>
+            <div style={{ color: '#b3b3b3', padding: '32px 0' }}>Searching millions of songs...</div>
           ) : results.length === 0 ? (
             <div style={{ color: '#b3b3b3', padding: '32px 0' }}>
               No songs found matching "{queryStr}". Try another artist or song name!
