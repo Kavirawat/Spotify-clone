@@ -72,7 +72,7 @@ export default function Search({ searchQuery = '', setSearchQuery, onOpenAddToPl
   return (
     <div className="content-body">
 
-      <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '12px', marginBottom: '16px' }}>
+      <div className="category-pills">
         {['🚗 Long Drive', 'Ilahi', 'Arijit Singh', 'Cheques', 'Diljit Dosanjh', 'Kesariya', 'Tum Hi Ho', 'Tauba Tauba', 'Chaleya', 'Believer'].map(
           (tag) => (
             <button
@@ -107,10 +107,10 @@ export default function Search({ searchQuery = '', setSearchQuery, onOpenAddToPl
             <table className="song-table">
               <thead>
                 <tr>
-                  <th style={{ width: '40px' }}>#</th>
+                  <th style={{ width: '40px' }} className="hide-mobile">#</th>
                   <th>Title</th>
-                  <th>Album</th>
-                  <th style={{ width: '70px' }}>Time</th>
+                  <th className="hide-mobile">Album</th>
+                  <th style={{ width: '70px' }} className="hide-small">Time</th>
                   <th style={{ width: '80px' }}>Actions</th>
                 </tr>
               </thead>
@@ -125,7 +125,7 @@ export default function Search({ searchQuery = '', setSearchQuery, onOpenAddToPl
                       className={`song-row ${isCurrent ? 'active' : ''}`}
                       onClick={() => handleSongClick(song)}
                     >
-                      <td className="track-num-cell">
+                      <td className="track-num-cell hide-mobile">
                         <div className="track-num-wrapper">
                           {isCurrent ? (
                             isPlaying ? (
@@ -157,8 +157,8 @@ export default function Search({ searchQuery = '', setSearchQuery, onOpenAddToPl
                           </div>
                         </div>
                       </td>
-                      <td>{song.album || 'Single'}</td>
-                      <td>{song.duration || '03:30'}</td>
+                      <td className="hide-mobile">{song.album || 'Single'}</td>
+                      <td className="hide-small">{song.duration || '03:30'}</td>
                       <td>
                         <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                           <button
@@ -198,31 +198,15 @@ export default function Search({ searchQuery = '', setSearchQuery, onOpenAddToPl
           <h2 className="section-title" style={{ marginBottom: '20px' }}>
             Browse All Categories
           </h2>
-          <div
-            style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fill, minmax(170px, 1fr))',
-              gap: '16px',
-            }}
-          >
+          <div className="browse-categories-grid">
             {browseCategories.map((cat) => (
               <div
                 key={cat.name}
+                className="browse-category-card"
                 onClick={() => setSearchQuery && setSearchQuery(cat.query)}
                 style={{
                   backgroundColor: cat.color,
-                  borderRadius: '8px',
-                  height: '130px',
-                  padding: '16px',
-                  position: 'relative',
-                  overflow: 'hidden',
-                  cursor: 'pointer',
-                  fontWeight: '700',
-                  fontSize: '1.15rem',
-                  transition: 'transform 0.2s',
                 }}
-                onMouseEnter={(e) => (e.currentTarget.style.transform = 'scale(1.03)')}
-                onMouseLeave={(e) => (e.currentTarget.style.transform = 'scale(1)')}
               >
                 <span>{cat.name}</span>
               </div>

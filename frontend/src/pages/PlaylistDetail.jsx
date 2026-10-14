@@ -131,10 +131,10 @@ export default function PlaylistDetail({ playlistId, onGoBack }) {
           <table className="song-table">
             <thead>
               <tr>
-                <th style={{ width: '40px' }}>#</th>
+                <th style={{ width: '40px' }} className="hide-mobile">#</th>
                 <th>Title</th>
-                <th>Album</th>
-                <th style={{ width: '80px' }}>
+                <th className="hide-mobile">Album</th>
+                <th style={{ width: '80px' }} className="hide-small">
                   <Clock size={16} />
                 </th>
                 <th style={{ width: '50px' }}></th>
@@ -155,7 +155,7 @@ export default function PlaylistDetail({ playlistId, onGoBack }) {
                       }
                     }}
                   >
-                    <td className="track-num-cell">
+                    <td className="track-num-cell hide-mobile">
                       <div className="track-num-wrapper">
                         {isCurrent ? (
                           isPlaying ? (
@@ -184,8 +184,8 @@ export default function PlaylistDetail({ playlistId, onGoBack }) {
                         </div>
                       </div>
                     </td>
-                    <td>{song.album || 'Single'}</td>
-                    <td>{song.duration || '03:30'}</td>
+                    <td className="hide-mobile">{song.album || 'Single'}</td>
+                    <td className="hide-small">{song.duration || '03:30'}</td>
                     <td>
                       {playlist.isCustom && (
                         <button

@@ -12,6 +12,7 @@ import {
   UserPlus,
   Sun,
   Moon,
+  X,
 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
@@ -46,19 +47,22 @@ export default function TopNav({
 
   return (
     <header className="top-nav">
-      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+      <div className="top-nav-left">
         <button
           className="mobile-menu-toggle icon-btn"
           onClick={() => setIsMobileOpen((prev) => !prev)}
+          title="Open Library menu"
+          aria-label="Open menu"
         >
           <Menu size={22} />
         </button>
 
-        <div className="nav-arrows">
+        <div className={`nav-arrows ${currentView === 'search' ? 'hidden-on-search' : ''}`}>
           <button
             className="arrow-circle"
             onClick={() => setCurrentView('home')}
             title="Go to Home"
+            aria-label="Go to Home"
           >
             <ChevronLeft size={20} />
           </button>
@@ -66,6 +70,7 @@ export default function TopNav({
             className="arrow-circle"
             onClick={() => setCurrentView('search')}
             title="Go to Search"
+            aria-label="Go to Search"
           >
             <ChevronRight size={20} />
           </button>
@@ -82,13 +87,24 @@ export default function TopNav({
               onChange={(e) => setSearchQuery(e.target.value)}
               autoFocus
             />
+            {searchQuery && (
+              <button
+                type="button"
+                className="search-clear-btn"
+                onClick={() => setSearchQuery('')}
+                title="Clear search"
+                aria-label="Clear search"
+              >
+                <X size={15} />
+              </button>
+            )}
           </div>
         )}
       </div>
 
-      <div className="top-nav-actions" style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+      <div className="top-nav-actions">
         <button
-          className="badge-btn dark"
+          className="badge-btn dark top-nav-install-btn"
           style={{ display: 'flex', alignItems: 'center', gap: '6px' }}
           onClick={() => alert('Spotify Desktop App preview ready!')}
         >
@@ -133,6 +149,7 @@ export default function TopNav({
                 {userInitial}
               </div>
               <span
+                className="user-profile-name"
                 style={{
                   fontSize: '0.88rem',
                   fontWeight: 700,
@@ -187,7 +204,7 @@ export default function TopNav({
               >
                 <User size={17} />
               </div>
-              <span style={{ fontSize: '0.88rem', fontWeight: 700, color: 'var(--text-main)' }}>Profile</span>
+              <span className="user-profile-name" style={{ fontSize: '0.88rem', fontWeight: 700, color: 'var(--text-main)' }}>Profile</span>
               <ChevronDown
                 size={15}
                 style={{

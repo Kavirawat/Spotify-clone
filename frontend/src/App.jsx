@@ -12,12 +12,13 @@ import QueueModal from './components/QueueModal';
 import AuthModal from './components/AuthModal';
 import ProfileModal from './components/ProfileModal';
 import { AuthProvider } from './context/AuthContext';
-import { PlayerProvider } from './context/PlayerContext';
+import { PlayerProvider, usePlayer } from './context/PlayerContext';
 import { PlaylistProvider } from './context/PlaylistContext';
 import { ThemeProvider } from './context/ThemeContext';
 import { Home as HomeIcon, Search as SearchIcon, Library } from 'lucide-react';
 
 function AppContent() {
+  const { currentSong } = usePlayer();
   const [currentView, setCurrentView] = useState('home');
   const [selectedPlaylistId, setSelectedPlaylistId] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -52,7 +53,7 @@ function AppContent() {
 
   return (
     <>
-      <div className="app-container">
+      <div className={`app-container ${currentSong ? 'has-player' : 'no-player'}`}>
 
         <Sidebar
           currentView={currentView}

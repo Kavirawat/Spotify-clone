@@ -23,10 +23,8 @@ export default function LikedSongs() {
         }}
       >
         <div
+          className="liked-banner-icon"
           style={{
-            width: '190px',
-            height: '190px',
-            borderRadius: '4px',
             background: 'linear-gradient(135deg, #450af5, #8e8ee5, #c4efd9)',
             display: 'flex',
             alignItems: 'center',
@@ -34,7 +32,7 @@ export default function LikedSongs() {
             boxShadow: '0 12px 36px rgba(0, 0, 0, 0.6)',
           }}
         >
-          <Heart size={80} fill="#fff" color="#fff" />
+          <Heart size={64} fill="#fff" color="#fff" />
         </div>
         <div className="playlist-banner-info">
           <span className="playlist-banner-type">Playlist</span>
@@ -82,10 +80,10 @@ export default function LikedSongs() {
           <table className="song-table">
             <thead>
               <tr>
-                <th style={{ width: '40px' }}>#</th>
+                <th style={{ width: '40px' }} className="hide-mobile">#</th>
                 <th>Title</th>
-                <th>Album</th>
-                <th style={{ width: '80px' }}>
+                <th className="hide-mobile">Album</th>
+                <th style={{ width: '80px' }} className="hide-small">
                   <Clock size={16} />
                 </th>
                 <th style={{ width: '50px' }}></th>
@@ -108,7 +106,7 @@ export default function LikedSongs() {
                       }
                     }}
                   >
-                    <td className="track-num-cell">
+                    <td className="track-num-cell hide-mobile">
                       <div className="track-num-wrapper">
                         {isCurrent ? (
                           isPlaying ? (
@@ -137,8 +135,8 @@ export default function LikedSongs() {
                         </div>
                       </div>
                     </td>
-                    <td>{song.album || 'Single'}</td>
-                    <td>{song.duration || '03:30'}</td>
+                    <td className="hide-mobile">{song.album || 'Single'}</td>
+                    <td className="hide-small">{song.duration || '03:30'}</td>
                     <td>
                       <button
                         className="like-btn liked"

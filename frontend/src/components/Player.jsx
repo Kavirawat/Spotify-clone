@@ -49,8 +49,8 @@ export default function Player({ onOpenAddToPlaylist, onToggleQueue }) {
 
   if (!currentSong) {
     return (
-      <footer className="music-player-bar">
-        <div style={{ color: '#888', fontSize: '0.85rem' }}>
+      <footer className="music-player-bar player-empty">
+        <div style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>
           Select a song to start listening
         </div>
       </footer>
@@ -61,6 +61,12 @@ export default function Player({ onOpenAddToPlaylist, onToggleQueue }) {
 
   return (
     <footer className="music-player-bar">
+      <div className="player-mobile-progressbar">
+        <div
+          className="player-mobile-progressbar-fill"
+          style={{ width: `${duration ? (currentTime / duration) * 100 : 0}%` }}
+        />
+      </div>
 
       <div className="player-album">
         <img
@@ -197,10 +203,20 @@ export default function Player({ onOpenAddToPlaylist, onToggleQueue }) {
       <div className="player-mobile-controls">
         <button
           className="play-pause-circle"
-          style={{ width: '32px', height: '32px' }}
+          style={{ width: '34px', height: '34px' }}
           onClick={togglePlay}
+          aria-label={isPlaying ? 'Pause' : 'Play'}
         >
           {isPlaying ? <Pause size={18} fill="#000" /> : <Play size={18} fill="#000" />}
+        </button>
+        <button
+          className="control-icon"
+          onClick={nextSong}
+          title="Next track"
+          aria-label="Next track"
+          style={{ padding: '6px' }}
+        >
+          <SkipForward size={20} />
         </button>
       </div>
     </footer>
