@@ -161,17 +161,49 @@ function AppContent() {
   );
 }
 
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+  }
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+  componentDidCatch(error, errorInfo) {
+    console.error('UI Error:', error, errorInfo);
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh', color: '#fff', textAlign: 'center', padding: '20px' }}>
+          <h2>Something went wrong</h2>
+          <p style={{ color: '#b3b3b3', marginTop: '8px' }}>Please reload the player.</p>
+          <button
+            onClick={() => window.location.reload()}
+            style={{ marginTop: '16px', background: 'var(--spotify-green, #1db954)', color: '#000', border: 'none', padding: '10px 24px', borderRadius: '500px', fontWeight: 700, cursor: 'pointer' }}
+          >
+            Reload Spotify
+          </button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 export default function App() {
   return (
-    <ThemeProvider>
-      <AuthProvider>
-        <PlaylistProvider>
-          <PlayerProvider>
-            <AppContent />
-          </PlayerProvider>
-        </PlaylistProvider>
-      </AuthProvider>
-    </ThemeProvider>
+    <ErrorBoundary>
+      <ThemeProvider>
+        <AuthProvider>
+          <PlaylistProvider>
+            <PlayerProvider>
+              <AppContent />
+            </PlayerProvider>
+          </PlaylistProvider>
+        </AuthProvider>
+      </ThemeProvider>
+    </ErrorBoundary>
   );
 }
 

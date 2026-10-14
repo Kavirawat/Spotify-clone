@@ -30,14 +30,27 @@ export async function searchSongs(query) {
     }
   } catch {}
 
-  if (!query || !query.trim()) return defaultSongs;
-  const q = query.toLowerCase();
-  return defaultSongs.filter(
-    (s) =>
-      (s.title && s.title.toLowerCase().includes(q)) ||
-      (s.artist && s.artist.toLowerCase().includes(q)) ||
-      (s.album && s.album.toLowerCase().includes(q))
-  );
+  if (!query || typeof query !== 'string' || !query.trim()) return defaultSongs;
+  const q = query.toLowerCase().trim();
+  const cleanQ = q.replace(/[^\p{L}\p{N}\s]/gu, '').trim();
+
+  return defaultSongs.filter((s) => {
+    if (!s) return false;
+    const title = (s.title || '').toLowerCase();
+    const artist = (s.artist || '').toLowerCase();
+    const album = (s.album || '').toLowerCase();
+    const category = (s.category || '').toLowerCase();
+
+    if (title.includes(q) || artist.includes(q) || album.includes(q) || category.includes(q)) {
+      return true;
+    }
+    if (cleanQ) {
+      if (title.includes(cleanQ) || artist.includes(cleanQ) || category.includes(cleanQ)) {
+        return true;
+      }
+    }
+    return false;
+  });
 }
 
 export async function fetchPlaylists() {
@@ -190,16 +203,22 @@ export async function fetchLikedSongs() {
     if (res.ok) {
       const data = await res.json().catch(() => null);
       if (data && data.success && Array.isArray(data.data) && data.data.length > 0) {
-        return data.data;
+        return data.data.map((item) => (item && item.song ? item.song : item));
       }
     }
   } catch {}
 
   try {
     const saved = localStorage.getItem('spotify_liked_songs');
-    return saved ? JSON.parse(saved) : defaultSongs.slice(0, 4).map((s) => ({ _id: 'like_' + s._id, song: s }));
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed.map((item) => (item && item.song ? item.song : item));
+      }
+    }
+    return defaultSongs.slice(0, 4);
   } catch {
-    return [];
+    return defaultSongs.slice(0, 4);
   }
 }
 
@@ -218,18 +237,21 @@ export async function toggleLikeSong(songId, songData = null) {
 
   try {
     const saved = localStorage.getItem('spotify_liked_songs');
-    let list = saved ? JSON.parse(saved) : defaultSongs.slice(0, 4).map((s) => ({ _id: 'like_' + s._id, song: s }));
-    const exists = list.some((item) => (item.song?._id || item.song) === songId);
+    let list = saved ? JSON.parse(saved) : defaultSongs.slice(0, 4);
+    if (!Array.isArray(list)) list = defaultSongs.slice(0, 4);
+    list = list.map((item) => (item && item.song ? item.song : item));
+
+    const exists = list.some((item) => item && String(item._id) === String(songId));
     if (exists) {
-      list = list.filter((item) => (item.song?._id || item.song) !== songId);
+      list = list.filter((item) => item && String(item._id) !== String(songId));
       localStorage.setItem('spotify_liked_songs', JSON.stringify(list));
       return { success: true, isLiked: false, message: 'Removed from Liked Songs' };
     } else {
-      const songObj = songData || defaultSongs.find((s) => s._id === songId);
+      const songObj = songData || defaultSongs.find((s) => s && String(s._id) === String(songId));
       if (songObj) {
-        list.unshift({ _id: 'like_' + songId, song: songObj });
+        list.unshift(songObj);
         localStorage.setItem('spotify_liked_songs', JSON.stringify(list));
-        return { success: true, isLiked: true, message: 'Added to Liked Songs' };
+        return { success: true, isLiked: true, song: songObj, message: 'Added to Liked Songs' };
       }
     }
   } catch {}

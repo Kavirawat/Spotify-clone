@@ -92,7 +92,9 @@ export default function LikedSongs() {
               </tr>
             </thead>
             <tbody>
-              {likedSongs.map((song, idx) => {
+              {likedSongs.map((item, idx) => {
+                const song = item?.song || item;
+                if (!song) return null;
                 const isCurrent = currentSong?._id === song._id;
                 return (
                   <tr

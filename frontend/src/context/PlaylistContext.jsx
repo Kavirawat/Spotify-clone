@@ -91,14 +91,21 @@ export function PlaylistProvider({ children }) {
 
   const handleToggleLike = async (song) => {
     try {
+      if (!song) return false;
       const songId = song._id || song;
       const res = await toggleLikeSong(songId, song);
       if (res && res.success) {
         if (res.isLiked) {
           const songObj = res.song || song;
-          setLikedSongs((prev) => [songObj, ...prev.filter((s) => s._id !== songId)]);
+          setLikedSongs((prev) => [songObj, ...prev.filter((s) => (s?.song?._id || s?._id) !== songId)]);
         } else {
-          setLikedSongs((prev) => prev.filter((s) => s._id !== songId && s.title !== song.title));
+          setLikedSongs((prev) =>
+            prev.filter((s) => {
+              const id = s?.song?._id || s?._id;
+              const title = s?.song?.title || s?.title;
+              return id !== songId && (!song.title || (title && title.toLowerCase() !== song.title.toLowerCase()));
+            })
+          );
         }
         return res.isLiked;
       }
@@ -109,9 +116,17 @@ export function PlaylistProvider({ children }) {
   };
 
   const isSongLiked = (songId, songTitle = '') => {
-    return likedSongs.some(
-      (s) => s._id === songId || (songTitle && s.title.toLowerCase() === songTitle.toLowerCase())
-    );
+    if (!likedSongs || !Array.isArray(likedSongs)) return false;
+    return likedSongs.some((s) => {
+      if (!s) return false;
+      const id = s.song?._id || s._id;
+      const title = s.song?.title || s.title;
+      if (songId && id && String(id) === String(songId)) return true;
+      if (songTitle && title && typeof title === 'string' && title.toLowerCase() === String(songTitle).toLowerCase()) {
+        return true;
+      }
+      return false;
+    });
   };
 
   return (

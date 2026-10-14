@@ -21,34 +21,47 @@ const browseCategories = [
   { name: 'Workout Beats', query: 'Workout gym hits', color: '#777777' },
 ];
 
-export default function Search({ searchQuery, setSearchQuery, onOpenAddToPlaylist }) {
+export default function Search({ searchQuery = '', setSearchQuery, onOpenAddToPlaylist }) {
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const { playSong, togglePlay, currentSong, isPlaying } = usePlayer();
   const { toggleLike, isSongLiked } = usePlaylist();
 
+  const queryStr = typeof searchQuery === 'string' ? searchQuery : '';
+
   useEffect(() => {
+    let active = true;
     async function doSearch() {
-      if (!searchQuery.trim()) {
+      if (!queryStr.trim()) {
         setResults([]);
         return;
       }
       setLoading(true);
       try {
-        const data = await searchSongs(searchQuery);
-        setResults(data);
+        const data = await searchSongs(queryStr);
+        if (active) {
+          setResults(Array.isArray(data) ? data : []);
+        }
       } catch (err) {
-        console.error(err);
+        if (active) {
+          setResults([]);
+        }
       } finally {
-        setLoading(false);
+        if (active) {
+          setLoading(false);
+        }
       }
     }
 
-    const timer = setTimeout(doSearch, 200);
-    return () => clearTimeout(timer);
-  }, [searchQuery]);
+    const timer = setTimeout(doSearch, 150);
+    return () => {
+      active = false;
+      clearTimeout(timer);
+    };
+  }, [queryStr]);
 
   const handleSongClick = (song) => {
+    if (!song) return;
     if (currentSong && currentSong._id === song._id) {
       togglePlay();
     } else {
@@ -64,7 +77,7 @@ export default function Search({ searchQuery, setSearchQuery, onOpenAddToPlaylis
           (tag) => (
             <button
               key={tag}
-              className={`pill-btn ${searchQuery.toLowerCase() === tag.toLowerCase() ? 'active' : ''}`}
+              className={`pill-btn ${queryStr.toLowerCase() === tag.toLowerCase() ? 'active' : ''}`}
               onClick={() => setSearchQuery && setSearchQuery(tag)}
             >
               {tag}
@@ -73,14 +86,14 @@ export default function Search({ searchQuery, setSearchQuery, onOpenAddToPlaylis
         )}
       </div>
 
-      {searchQuery.trim() ? (
+      {queryStr.trim() ? (
         <div>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
             <h2 className="section-title">
-              Results for "<span style={{ color: 'var(--spotify-green)' }}>{searchQuery}</span>"
+              Results for "<span style={{ color: 'var(--spotify-green)' }}>{queryStr}</span>"
             </h2>
             <span style={{ fontSize: '0.85rem', color: '#b3b3b3' }}>
-              {results.length} real songs found
+              {Array.isArray(results) ? results.length : 0} real songs found
             </span>
           </div>
 
@@ -88,7 +101,7 @@ export default function Search({ searchQuery, setSearchQuery, onOpenAddToPlaylis
             <div style={{ color: '#b3b3b3', padding: '32px 0' }}>Searching real music catalog...</div>
           ) : results.length === 0 ? (
             <div style={{ color: '#b3b3b3', padding: '32px 0' }}>
-              No songs found matching "{searchQuery}". Try another artist or song name!
+              No songs found matching "{queryStr}". Try another artist or song name!
             </div>
           ) : (
             <table className="song-table">
@@ -103,11 +116,12 @@ export default function Search({ searchQuery, setSearchQuery, onOpenAddToPlaylis
               </thead>
               <tbody>
                 {results.map((song, idx) => {
+                  if (!song) return null;
                   const isCurrent = currentSong?._id === song._id;
-                  const isLiked = isSongLiked(song._id, song.title);
+                  const isLiked = isSongLiked ? isSongLiked(song._id, song.title) : false;
                   return (
                     <tr
-                      key={`${song._id}-${idx}`}
+                      key={`${song._id || 's'}-${idx}`}
                       className={`song-row ${isCurrent ? 'active' : ''}`}
                       onClick={() => handleSongClick(song)}
                     >
@@ -130,16 +144,16 @@ export default function Search({ searchQuery, setSearchQuery, onOpenAddToPlaylis
                       <td>
                         <div className="song-cell-title">
                           <img
-                            src={song.coverUrl || '/images/card1img.jpeg'}
-                            alt={song.title}
+                            src={song.coverUrl || '/card1img.jpeg'}
+                            alt={song.title || 'Track'}
                             className="song-cell-thumb"
                             onError={(e) => {
                               e.target.src = '/card1img.jpeg';
                             }}
                           />
                           <div className="song-cell-text">
-                            <span className="main-text">{song.title}</span>
-                            <span className="sub-text">{song.artist}</span>
+                            <span className="main-text">{song.title || 'Untitled'}</span>
+                            <span className="sub-text">{song.artist || 'Unknown Artist'}</span>
                           </div>
                         </div>
                       </td>
@@ -152,7 +166,7 @@ export default function Search({ searchQuery, setSearchQuery, onOpenAddToPlaylis
                             title={isLiked ? 'Liked' : 'Like song'}
                             onClick={(e) => {
                               e.stopPropagation();
-                              toggleLike(song);
+                              if (toggleLike) toggleLike(song);
                             }}
                           >
                             <Heart size={16} fill={isLiked ? 'var(--spotify-green)' : 'transparent'} />
