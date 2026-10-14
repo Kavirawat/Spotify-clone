@@ -1,4 +1,5 @@
-const BASE_URL = '/api';
+const API_BASE = import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL.replace(/\/+$/, '') : '';
+const BASE_URL = API_BASE ? `${API_BASE}/api` : '/api';
 
 export async function fetchSongs(category = '') {
   const url = category ? `${BASE_URL}/songs?category=${category}` : `${BASE_URL}/songs`;
