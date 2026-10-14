@@ -2,7 +2,6 @@ const mongoose = require('mongoose');
 const Playlist = require('../models/Playlist');
 const Song = require('../models/Song');
 
-// GET all playlists
 exports.getPlaylists = async (req, res) => {
   try {
     const playlists = await Playlist.find().populate('songs').sort({ createdAt: -1 });
@@ -12,7 +11,6 @@ exports.getPlaylists = async (req, res) => {
   }
 };
 
-// GET single playlist
 exports.getPlaylistById = async (req, res) => {
   try {
     const playlist = await Playlist.findById(req.params.id).populate('songs');
@@ -25,7 +23,6 @@ exports.getPlaylistById = async (req, res) => {
   }
 };
 
-// CREATE playlist
 exports.createPlaylist = async (req, res) => {
   try {
     const { name, description, coverUrl } = req.body;
@@ -47,7 +44,6 @@ exports.createPlaylist = async (req, res) => {
   }
 };
 
-// ADD song to playlist (supports both existing MongoDB songs & external search tracks)
 exports.addSongToPlaylist = async (req, res) => {
   try {
     const { songId, songData } = req.body;
@@ -97,7 +93,6 @@ exports.addSongToPlaylist = async (req, res) => {
   }
 };
 
-// REMOVE song from playlist
 exports.removeSongFromPlaylist = async (req, res) => {
   try {
     const { songId } = req.params;
@@ -117,7 +112,6 @@ exports.removeSongFromPlaylist = async (req, res) => {
   }
 };
 
-// DELETE playlist
 exports.deletePlaylist = async (req, res) => {
   try {
     const playlist = await Playlist.findById(req.params.id);
@@ -131,3 +125,4 @@ exports.deletePlaylist = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+

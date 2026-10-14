@@ -58,7 +58,7 @@ export default function Search({ searchQuery, setSearchQuery, onOpenAddToPlaylis
 
   return (
     <div className="content-body">
-      {/* Quick Search Tags */}
+
       <div style={{ display: 'flex', gap: '8px', overflowX: 'auto', paddingBottom: '12px', marginBottom: '16px' }}>
         {['🚗 Long Drive', 'Ilahi', 'Arijit Singh', 'Cheques', 'Diljit Dosanjh', 'Kesariya', 'Tum Hi Ho', 'Tauba Tauba', 'Chaleya', 'Believer'].map(
           (tag) => (
@@ -73,7 +73,6 @@ export default function Search({ searchQuery, setSearchQuery, onOpenAddToPlaylis
         )}
       </div>
 
-      {/* If search query is present */}
       {searchQuery.trim() ? (
         <div>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
@@ -180,7 +179,7 @@ export default function Search({ searchQuery, setSearchQuery, onOpenAddToPlaylis
           )}
         </div>
       ) : (
-        /* Browse All Categories */
+
         <div>
           <h2 className="section-title" style={{ marginBottom: '20px' }}>
             Browse All Categories
@@ -220,3 +219,4 @@ export default function Search({ searchQuery, setSearchQuery, onOpenAddToPlaylis
     </div>
   );
 }
+

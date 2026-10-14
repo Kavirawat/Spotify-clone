@@ -76,3 +76,87 @@ export async function toggleLikeSong(songId, songData = null) {
   const data = await res.json();
   return data;
 }
+
+export async function registerUser(name, email, password) {
+  try {
+    const res = await fetch(`${BASE_URL}/auth/register`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, email, password }),
+    });
+    const data = await res.json().catch(() => null);
+    if (!res.ok) {
+      return {
+        success: false,
+        message: data?.message || `Server error (${res.status})`,
+      };
+    }
+    return data || { success: false, message: 'Invalid server response' };
+  } catch (err) {
+    return {
+      success: false,
+      message: 'Cannot connect to backend server. Please make sure the backend is running.',
+    };
+  }
+}
+
+export async function loginUser(email, password) {
+  try {
+    const res = await fetch(`${BASE_URL}/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+    });
+    const data = await res.json().catch(() => null);
+    if (!res.ok) {
+      return {
+        success: false,
+        message: data?.message || `Server error (${res.status})`,
+      };
+    }
+    return data || { success: false, message: 'Invalid server response' };
+  } catch (err) {
+    return {
+      success: false,
+      message: 'Cannot connect to backend server. Please make sure the backend is running.',
+    };
+  }
+}
+
+export async function fetchUserProfile(token) {
+  try {
+    const res = await fetch(`${BASE_URL}/auth/me`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    const data = await res.json().catch(() => null);
+    if (!res.ok) {
+      return { success: false, message: data?.message || 'Failed to fetch profile' };
+    }
+    return data || { success: false, message: 'Invalid profile response' };
+  } catch (err) {
+    return { success: false, message: err.message };
+  }
+}
+
+export async function updateUserProfile(token, profileData) {
+  try {
+    const res = await fetch(`${BASE_URL}/auth/profile`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify(profileData),
+    });
+    const data = await res.json().catch(() => null);
+    if (!res.ok) {
+      return { success: false, message: data?.message || 'Failed to update profile' };
+    }
+    return data || { success: false, message: 'Invalid response' };
+  } catch (err) {
+    return { success: false, message: err.message };
+  }
+}
+

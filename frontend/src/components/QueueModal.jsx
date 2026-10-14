@@ -17,7 +17,6 @@ export default function QueueModal({ isOpen, onClose }) {
           </button>
         </div>
 
-        {/* Now Playing */}
         {currentSong && (
           <div>
             <h4 style={{ fontSize: '0.85rem', color: '#b3b3b3', marginBottom: '8px' }}>
@@ -39,7 +38,6 @@ export default function QueueModal({ isOpen, onClose }) {
           </div>
         )}
 
-        {/* Next in Queue */}
         <div style={{ marginTop: '12px' }}>
           <h4 style={{ fontSize: '0.85rem', color: '#b3b3b3', marginBottom: '8px' }}>
             Next in Queue ({queue.length} songs)
@@ -82,3 +80,4 @@ export default function QueueModal({ isOpen, onClose }) {
     </div>
   );
 }
+

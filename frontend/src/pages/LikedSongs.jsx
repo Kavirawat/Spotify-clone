@@ -15,7 +15,7 @@ export default function LikedSongs() {
 
   return (
     <div>
-      {/* Banner */}
+
       <div
         className="playlist-banner"
         style={{
@@ -49,7 +49,7 @@ export default function LikedSongs() {
       </div>
 
       <div className="content-body">
-        {/* Play Button */}
+
         {likedSongs.length > 0 && (
           <div style={{ marginBottom: '24px' }}>
             <button
@@ -78,7 +78,6 @@ export default function LikedSongs() {
           </div>
         )}
 
-        {/* Songs List */}
         {likedSongs.length > 0 ? (
           <table className="song-table">
             <thead>
@@ -164,3 +163,4 @@ export default function LikedSongs() {
     </div>
   );
 }
+

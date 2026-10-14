@@ -61,7 +61,7 @@ export default function Player({ onOpenAddToPlaylist, onToggleQueue }) {
 
   return (
     <footer className="music-player-bar">
-      {/* 1. Current Song Info */}
+
       <div className="player-album">
         <img
           src={currentSong.coverUrl || '/images/card1img.jpeg'}
@@ -97,7 +97,6 @@ export default function Player({ onOpenAddToPlaylist, onToggleQueue }) {
         )}
       </div>
 
-      {/* 2. Controls & Seek Bar (Desktop) */}
       <div className="player-center">
         <div className="player-controls">
           <button
@@ -152,7 +151,6 @@ export default function Player({ onOpenAddToPlaylist, onToggleQueue }) {
         </div>
       </div>
 
-      {/* 3. Right Controls (Volume, Queue, Fullscreen) */}
       <div className="player-right">
         {onToggleQueue && (
           <button className="control-icon" title="Queue" onClick={onToggleQueue}>
@@ -196,7 +194,6 @@ export default function Player({ onOpenAddToPlaylist, onToggleQueue }) {
         </button>
       </div>
 
-      {/* Mobile Right Controls */}
       <div className="player-mobile-controls">
         <button
           className="play-pause-circle"
@@ -209,3 +206,4 @@ export default function Player({ onOpenAddToPlaylist, onToggleQueue }) {
     </footer>
   );
 }
+

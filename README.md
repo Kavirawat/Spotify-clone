@@ -26,9 +26,14 @@ A complete, responsive, full-stack **Spotify Web Player Clone** built with **Rea
 - 📱 **100% Fully Responsive Design**:
   - **Desktop**: 2-column Spotify layout with sidebar, header, card grid, and sticky player bar.
   - **Mobile / Tablet**: Slide-out mobile drawer, bottom app navigation (Home, Search, Your Library), compact mobile player bar, and responsive card grid.
+- 👤 **User Authentication & Profile**:
+  - Sign Up / Register with Name, Email & Password (secure bcrypt hashing).
+  - Log In with JWT token authentication saved in local storage.
+  - User Profile view with edit profile name, bio, and member-since date.
+  - Logout functionality with state reset.
 - 🗄️ **MongoDB & REST API**:
   - Clean separation: `backend/` and `frontend/` folders.
-  - Mongoose models for `Song`, `Playlist`, and `LikedSong`.
+  - Mongoose models for `User`, `Song`, `Playlist`, and `LikedSong`.
 
 ---
 
@@ -40,14 +45,19 @@ Spotify-clone/
 │   ├── config/
 │   │   └── db.js                 # MongoDB connection
 │   ├── controllers/
+│   │   ├── authController.js     # User registration, login & profile
 │   │   ├── songController.js     # Songs fetching & search logic
 │   │   ├── playlistController.js # Playlist CRUD operations
 │   │   └── likeController.js     # Liked songs toggle & list
+│   ├── middleware/
+│   │   └── auth.js               # JWT authentication middleware
 │   ├── models/
+│   │   ├── User.js               # Mongoose User schema & bcrypt methods
 │   │   ├── Song.js               # Mongoose Song schema
 │   │   ├── Playlist.js           # Mongoose Playlist schema
 │   │   └── LikedSong.js          # Mongoose LikedSong schema
 │   ├── routes/
+│   │   ├── authRoutes.js         # /api/auth (register, login, me, profile)
 │   │   ├── songRoutes.js         # /api/songs
 │   │   ├── playlistRoutes.js     # /api/playlists
 │   │   └── likeRoutes.js         # /api/likes
@@ -134,10 +144,14 @@ npm run dev
 ---
 
 ## 📡 API Endpoints Reference
-
-| Method | Endpoint | Description |
-| :--- | :--- | :--- |
-| `GET` | `/api/songs` | Sabhi songs fetch karega (optional `?category=...`) |
+ 
+ | Method | Endpoint | Description |
+ | :--- | :--- | :--- |
++| `POST` | `/api/auth/register` | Naya user register karega (name, email, password) |
++| `POST` | `/api/auth/login` | Email aur password se login karega, JWT token return karega |
++| `GET` | `/api/auth/me` | Logged-in user ki profile info fetch karega (Protected) |
++| `PUT` | `/api/auth/profile` | Profile name ya bio update karega (Protected) |
+ | `GET` | `/api/songs` | Sabhi songs fetch karega (optional `?category=...`) |
 | `GET` | `/api/songs/search?q=...` | Song name, artist ya album se search karega |
 | `GET` | `/api/songs/:id` | Single song details |
 | `GET` | `/api/playlists` | Sabhi playlists fetch karega |

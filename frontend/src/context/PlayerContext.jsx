@@ -11,18 +11,16 @@ export function PlayerProvider({ children }) {
   const [volume, setVolume] = useState(0.7);
   const [isMuted, setIsMuted] = useState(false);
   const [isShuffle, setIsShuffle] = useState(false);
-  const [repeatMode, setRepeatMode] = useState('none'); // 'none', 'all', 'one'
+  const [repeatMode, setRepeatMode] = useState('none');
   const [queue, setQueue] = useState([]);
   const [queueIndex, setQueueIndex] = useState(-1);
 
-  // Sync volume with audio element
   useEffect(() => {
     if (audioRef.current) {
       audioRef.current.volume = isMuted ? 0 : volume;
     }
   }, [volume, isMuted]);
 
-  // Handle audio events
   useEffect(() => {
     const audio = audioRef.current;
 
@@ -128,7 +126,7 @@ export function PlayerProvider({ children }) {
       if (repeatMode === 'all') {
         nextIndex = 0;
       } else {
-        return; // reached end
+        return;
       }
     }
 
@@ -139,7 +137,6 @@ export function PlayerProvider({ children }) {
   const prevSong = () => {
     if (queue.length === 0) return;
 
-    // If more than 3 seconds in, restart the song
     if (audioRef.current.currentTime > 3) {
       audioRef.current.currentTime = 0;
       return;
@@ -225,3 +222,4 @@ export function PlayerProvider({ children }) {
 export function usePlayer() {
   return useContext(PlayerContext);
 }
+

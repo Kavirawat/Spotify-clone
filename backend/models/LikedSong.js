@@ -15,3 +15,4 @@ const likedSongSchema = new mongoose.Schema(
 );
 
 module.exports = mongoose.model('LikedSong', likedSongSchema);
+

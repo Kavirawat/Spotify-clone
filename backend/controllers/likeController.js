@@ -2,7 +2,6 @@ const mongoose = require('mongoose');
 const LikedSong = require('../models/LikedSong');
 const Song = require('../models/Song');
 
-// GET all liked songs
 exports.getLikedSongs = async (req, res) => {
   try {
     const likes = await LikedSong.find().populate('song').sort({ createdAt: -1 });
@@ -13,7 +12,6 @@ exports.getLikedSongs = async (req, res) => {
   }
 };
 
-// Toggle like / unlike a song (supports both existing MongoDB songs & external search tracks)
 exports.toggleLike = async (req, res) => {
   try {
     const { songId, songData } = req.body;
@@ -71,3 +69,4 @@ exports.toggleLike = async (req, res) => {
     res.status(500).json({ success: false, message: error.message });
   }
 };
+

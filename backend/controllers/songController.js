@@ -1,6 +1,5 @@
 const Song = require('../models/Song');
 
-// GET all songs or filter by category
 exports.getSongs = async (req, res) => {
   try {
     const { category } = req.query;
@@ -12,7 +11,6 @@ exports.getSongs = async (req, res) => {
   }
 };
 
-// GET single song by ID
 exports.getSongById = async (req, res) => {
   try {
     const song = await Song.findById(req.params.id);
@@ -25,7 +23,6 @@ exports.getSongById = async (req, res) => {
   }
 };
 
-// Helper to format ms to mm:ss
 function formatDuration(ms) {
   if (!ms) return '03:30';
   const totalSecs = Math.floor(ms / 1000);
@@ -34,7 +31,6 @@ function formatDuration(ms) {
   return `${m < 10 ? '0' : ''}${m}:${s < 10 ? '0' : ''}${s}`;
 }
 
-// Search songs by query (local MongoDB + Global Real Songs API)
 exports.searchSongs = async (req, res) => {
   try {
     const { q } = req.query;
@@ -46,12 +42,10 @@ exports.searchSongs = async (req, res) => {
     const searchTerm = q.trim();
     const regex = new RegExp(searchTerm, 'i');
 
-    // 1. Search local MongoDB
     const localSongs = await Song.find({
       $or: [{ title: regex }, { artist: regex }, { album: regex }, { category: regex }],
     });
 
-    // 2. Search Global Real Music API (iTunes Public Music Engine)
     let externalSongs = [];
     try {
       const itunesUrl = `https://itunes.apple.com/search?term=${encodeURIComponent(
@@ -81,7 +75,6 @@ exports.searchSongs = async (req, res) => {
       console.warn('External music search API error:', apiErr.message);
     }
 
-    // Merge and deduplicate by title + artist
     const seen = new Set();
     const combined = [];
 
@@ -107,7 +100,6 @@ exports.searchSongs = async (req, res) => {
   }
 };
 
-// Create a new song
 exports.createSong = async (req, res) => {
   try {
     const song = await Song.create(req.body);
@@ -116,3 +108,4 @@ exports.createSong = async (req, res) => {
     res.status(400).json({ success: false, message: error.message });
   }
 };
+

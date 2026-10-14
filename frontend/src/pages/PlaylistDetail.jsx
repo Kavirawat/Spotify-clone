@@ -70,7 +70,7 @@ export default function PlaylistDetail({ playlistId, onGoBack }) {
 
   return (
     <div>
-      {/* Banner */}
+
       <div className="playlist-banner">
         <img
           src={playlist.coverUrl || '/images/card1img.jpeg'}
@@ -93,7 +93,7 @@ export default function PlaylistDetail({ playlistId, onGoBack }) {
       </div>
 
       <div className="content-body">
-        {/* Actions bar */}
+
         <div style={{ display: 'flex', alignItems: 'center', gap: '20px', marginBottom: '24px' }}>
           <button
             className="play-pause-circle"
@@ -127,7 +127,6 @@ export default function PlaylistDetail({ playlistId, onGoBack }) {
           )}
         </div>
 
-        {/* Songs List */}
         {playlist.songs && playlist.songs.length > 0 ? (
           <table className="song-table">
             <thead>
@@ -212,3 +211,4 @@ export default function PlaylistDetail({ playlistId, onGoBack }) {
     </div>
   );
 }
+

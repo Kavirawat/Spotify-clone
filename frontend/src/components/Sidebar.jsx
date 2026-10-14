@@ -33,7 +33,7 @@ export default function Sidebar({
         />
       )}
       <aside className={`sidebar ${isMobileOpen ? 'mobile-open' : ''}`}>
-        {/* Mobile close button */}
+
         {isMobileOpen && (
           <div style={{ display: 'flex', justifyContent: 'flex-end', padding: '4px' }}>
             <button className="icon-btn" onClick={() => setIsMobileOpen(false)}>
@@ -42,7 +42,6 @@ export default function Sidebar({
           </div>
         )}
 
-        {/* Top Nav Box */}
         <div className="sidebar-box nav-links">
           <button
             className={`nav-link ${currentView === 'home' ? 'active' : ''}`}
@@ -60,7 +59,6 @@ export default function Sidebar({
           </button>
         </div>
 
-        {/* Library Box */}
         <div className="sidebar-box library-section">
           <div className="library-header">
             <div className="library-title" onClick={() => handleNav('home')}>
@@ -77,7 +75,7 @@ export default function Sidebar({
           </div>
 
           <div className="library-scroll">
-            {/* Liked Songs Shortcut */}
+
             <div
               className={`playlist-item ${currentView === 'liked' ? 'active' : ''}`}
               onClick={() => handleNav('liked')}
@@ -102,7 +100,6 @@ export default function Sidebar({
               </div>
             </div>
 
-            {/* Custom / Default Playlists list */}
             {playlists.map((pl) => (
               <div
                 key={pl._id}
@@ -130,7 +127,6 @@ export default function Sidebar({
               </div>
             ))}
 
-            {/* Create Playlist Promo Card if empty */}
             {playlists.length === 0 && (
               <div className="promo-card">
                 <h4>Create your first playlist</h4>
@@ -146,3 +142,4 @@ export default function Sidebar({
     </>
   );
 }
+

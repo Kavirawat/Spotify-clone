@@ -71,3 +71,4 @@ export default function AddToPlaylistModal({ song, isOpen, onClose }) {
     </div>
   );
 }
+

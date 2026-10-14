@@ -32,7 +32,7 @@ export default function Home({ onSelectPlaylist }) {
 
   return (
     <div className="content-body">
-      {/* Category Pills */}
+
       <div className="category-pills">
         <button
           className={`pill-btn ${filter === 'all' ? 'active' : ''}`}
@@ -63,7 +63,7 @@ export default function Home({ onSelectPlaylist }) {
       {loading ? (
         <div style={{ color: '#b3b3b3', padding: '24px 0' }}>Loading music tracks...</div>
       ) : filter === 'long drive' ? (
-        /* Only Long Drive View */
+
         <div>
           <div className="section-header">
             <h2 className="section-title">🚗 Long Drive Vibes & Road Trips ({driveSongs.length} Songs)</h2>
@@ -76,7 +76,7 @@ export default function Home({ onSelectPlaylist }) {
         </div>
       ) : (
         <>
-          {/* 🚗 Long Drive Vibes Section */}
+
           <div className="section-header">
             <h2 className="section-title">🚗 Long Drive Vibes (Best Road Trip Songs)</h2>
             <span
@@ -92,7 +92,6 @@ export default function Home({ onSelectPlaylist }) {
             ))}
           </div>
 
-          {/* Popular Playlists */}
           {playlists.length > 0 && (
             <>
               <div className="section-header">
@@ -111,7 +110,6 @@ export default function Home({ onSelectPlaylist }) {
             </>
           )}
 
-          {/* Trending Now */}
           <div className="section-header">
             <h2 className="section-title">Trending Now Near You</h2>
             <span className="section-see-all">Show all</span>
@@ -122,7 +120,6 @@ export default function Home({ onSelectPlaylist }) {
             ))}
           </div>
 
-          {/* Recently Played */}
           {recentSongs.length > 0 && (
             <>
               <div className="section-header">
@@ -137,7 +134,6 @@ export default function Home({ onSelectPlaylist }) {
             </>
           )}
 
-          {/* Featured Charts */}
           <div className="section-header">
             <h2 className="section-title">Featured Charts</h2>
             <span className="section-see-all">Show all</span>
@@ -150,10 +146,10 @@ export default function Home({ onSelectPlaylist }) {
         </>
       )}
 
-      {/* Footer Divider */}
       <div style={{ height: '120px', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <div style={{ width: '90%', borderTop: '1px solid rgba(255,255,255,0.1)' }}></div>
       </div>
     </div>
   );
 }
+

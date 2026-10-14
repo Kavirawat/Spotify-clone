@@ -38,3 +38,4 @@ export default function PlaylistCard({ playlist, onSelect }) {
     </div>
   );
 }
+

@@ -9,8 +9,12 @@ import LikedSongs from './pages/LikedSongs';
 import PlaylistModal from './components/PlaylistModal';
 import AddToPlaylistModal from './components/AddToPlaylistModal';
 import QueueModal from './components/QueueModal';
+import AuthModal from './components/AuthModal';
+import ProfileModal from './components/ProfileModal';
+import { AuthProvider } from './context/AuthContext';
 import { PlayerProvider } from './context/PlayerContext';
 import { PlaylistProvider } from './context/PlaylistContext';
+import { ThemeProvider } from './context/ThemeContext';
 import { Home as HomeIcon, Search as SearchIcon, Library } from 'lucide-react';
 
 function AppContent() {
@@ -19,10 +23,22 @@ function AppContent() {
   const [searchQuery, setSearchQuery] = useState('');
   const [isMobileOpen, setIsMobileOpen] = useState(false);
 
-  // Modals state
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [addToPlaylistSong, setAddToPlaylistSong] = useState(null);
   const [isQueueOpen, setIsQueueOpen] = useState(false);
+
+  const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
+  const [authModalMode, setAuthModalMode] = useState('login');
+  const [isProfileModalOpen, setIsProfileModalOpen] = useState(false);
+
+  const handleOpenAuth = (mode = 'login') => {
+    setAuthModalMode(mode);
+    setIsAuthModalOpen(true);
+  };
+
+  const handleOpenProfile = () => {
+    setIsProfileModalOpen(true);
+  };
 
   const handleSelectPlaylist = (pl) => {
     setSelectedPlaylistId(pl._id);
@@ -37,7 +53,7 @@ function AppContent() {
   return (
     <>
       <div className="app-container">
-        {/* Sidebar */}
+
         <Sidebar
           currentView={currentView}
           setCurrentView={setCurrentView}
@@ -48,7 +64,6 @@ function AppContent() {
           setSelectedPlaylistId={setSelectedPlaylistId}
         />
 
-        {/* Main Content Area */}
         <main className="main-view">
           <TopNav
             currentView={currentView}
@@ -56,6 +71,8 @@ function AppContent() {
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
             setIsMobileOpen={setIsMobileOpen}
+            onOpenAuth={handleOpenAuth}
+            onOpenProfile={handleOpenProfile}
           />
 
           {currentView === 'home' && (
@@ -81,13 +98,11 @@ function AppContent() {
         </main>
       </div>
 
-      {/* Bottom Music Player */}
       <Player
         onOpenAddToPlaylist={(song) => setAddToPlaylistSong(song)}
         onToggleQueue={() => setIsQueueOpen((prev) => !prev)}
       />
 
-      {/* Mobile Bottom Navigation */}
       <div className="mobile-bottom-nav">
         <button
           className={`mobile-nav-item ${currentView === 'home' ? 'active' : ''}`}
@@ -112,7 +127,6 @@ function AppContent() {
         </button>
       </div>
 
-      {/* Modals */}
       <PlaylistModal
         isOpen={isCreateModalOpen}
         onClose={() => setIsCreateModalOpen(false)}
@@ -129,16 +143,35 @@ function AppContent() {
         isOpen={isQueueOpen}
         onClose={() => setIsQueueOpen(false)}
       />
+
+      {isAuthModalOpen && (
+        <AuthModal
+          isOpen={isAuthModalOpen}
+          onClose={() => setIsAuthModalOpen(false)}
+          initialMode={authModalMode}
+          key={`auth-modal-${authModalMode}`}
+        />
+      )}
+
+      <ProfileModal
+        isOpen={isProfileModalOpen}
+        onClose={() => setIsProfileModalOpen(false)}
+      />
     </>
   );
 }
 
 export default function App() {
   return (
-    <PlaylistProvider>
-      <PlayerProvider>
-        <AppContent />
-      </PlayerProvider>
-    </PlaylistProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <PlaylistProvider>
+          <PlayerProvider>
+            <AppContent />
+          </PlayerProvider>
+        </PlaylistProvider>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
+

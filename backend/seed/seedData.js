@@ -7,7 +7,7 @@ const LikedSong = require('../models/LikedSong');
 dotenv.config();
 
 const allSongs = [
-  // --- POPULAR HITS ---
+
   {
     title: 'Kesariya (From "Brahmastra")',
     artist: 'Pritam, Arijit Singh & Amitabh Bhattacharya',
@@ -141,7 +141,6 @@ const allSongs = [
     plays: 1532548,
   },
 
-  // --- 🚗 LONG DRIVE VIBES (14 SONGS) ---
   {
     title: 'Ilahi',
     artist: 'Pritam & Arijit Singh',
@@ -313,7 +312,6 @@ const seedDB = async () => {
     const createdSongs = await Song.insertMany(allSongs);
     console.log(`Seeded ${createdSongs.length} songs.`);
 
-    // Find drive songs index starts at 12
     const driveSongIds = createdSongs.slice(12).map((s) => s._id);
 
     console.log('Seeding playlists...');
@@ -321,7 +319,7 @@ const seedDB = async () => {
       {
         name: 'Ultimate Long Drive Vibes 🚗💨',
         description: 'Windows down, volume up! Ilahi, Safarnama, Khaabon Ke Parinday, Cheques, Hawayein.',
-        coverUrl: createdSongs[12].coverUrl, // Ilahi artwork
+        coverUrl: createdSongs[12].coverUrl,
         songs: driveSongIds,
         isCustom: false,
       },
@@ -342,7 +340,7 @@ const seedDB = async () => {
       {
         name: 'Punjabi Drive & Beats 🔥',
         description: 'Shubh, Karan Aujla, Diljit Dosanjh & The PropheC.',
-        coverUrl: createdSongs[20].coverUrl, // Cheques artwork
+        coverUrl: createdSongs[20].coverUrl,
         songs: [createdSongs[5]._id, createdSongs[6]._id, createdSongs[20]._id, createdSongs[21]._id, createdSongs[22]._id],
         isCustom: false,
       },
@@ -358,12 +356,11 @@ const seedDB = async () => {
     await Playlist.insertMany(defaultPlaylists);
     console.log(`Seeded ${defaultPlaylists.length} playlists.`);
 
-    // Pre-like top drive songs
     await LikedSong.create([
-      { song: createdSongs[12]._id }, // Ilahi
-      { song: createdSongs[17]._id }, // Khaabon Ke Parinday
-      { song: createdSongs[0]._id },  // Kesariya
-      { song: createdSongs[20]._id }, // Cheques
+      { song: createdSongs[12]._id },
+      { song: createdSongs[17]._id },
+      { song: createdSongs[0]._id },
+      { song: createdSongs[20]._id },
     ]);
     console.log('Seeded sample liked songs.');
 
@@ -376,3 +373,4 @@ const seedDB = async () => {
 };
 
 seedDB();
+
